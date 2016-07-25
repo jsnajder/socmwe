@@ -9,7 +9,7 @@ def readlines_lzo(filename):
     print 'reading lines...'
     for line in p.stdout.readlines():
         print line
-        yield line
+        #yield line
     print 'here'
     p.wait()
 
