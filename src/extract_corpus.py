@@ -31,7 +31,7 @@ def main():
         if lang1 == 'en' and lang2 == 'en' and country is not None:
             s = '\t'.join((x[0], country, x[13]))
             sys.stdout.write(s)
-    sys.stdout.flush()
+        sys.stdout.flush()
 
 if __name__ == "__main__":
     main()
