@@ -10,6 +10,7 @@ def readlines_lzo(filename):
     for line in p.stdout.readlines():
         print line
         yield line
+    print 'here'
     p.wait()
 
 
