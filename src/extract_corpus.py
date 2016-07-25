@@ -7,7 +7,7 @@ def readlines_lzo(filename):
     p = subprocess.Popen(['lzop', '-dc', filename], stdout=subprocess.PIPE)
     for line in p.stdout.readlines():
         yield line
-    p.wait()
+    #p.wait()
 
 
 ident = 0
