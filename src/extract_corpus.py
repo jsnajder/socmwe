@@ -4,7 +4,9 @@ import sys
 
 
 def readlines_lzo(filename):
+    print 'lzop -dc'
     p = subprocess.Popen(['lzop', '-dc', filename], stdout=subprocess.PIPE)
+    print 'reading lines...'
     for line in p.stdout.readlines():
         print line
         yield line
