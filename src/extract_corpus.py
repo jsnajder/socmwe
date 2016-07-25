@@ -6,8 +6,9 @@ import sys
 def readlines_lzo(filename):
     p = subprocess.Popen(['lzop', '-dc', filename], stdout=subprocess.PIPE)
     for line in p.stdout.readlines():
+        print line
         yield line
-    #p.wait()
+    p.wait()
 
 
 ident = 0
@@ -31,7 +32,7 @@ def main():
         if lang1 == 'en' and lang2 == 'en' and country is not None:
             s = '\t'.join((x[0], country, x[13]))
             sys.stdout.write(s)
-        sys.stdout.flush()
+            sys.stdout.flush()
 
 if __name__ == "__main__":
     main()
