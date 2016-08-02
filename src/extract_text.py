@@ -10,13 +10,6 @@ def readlines_lzo(filename):
     p.wait()
 
 
-ident = 0
-lang1 = 4
-location = 11
-lang2 = 12
-text = 13
-
-
 def country_code(s):
     return s.split('-')[-1] if s != 'None' else None
 
@@ -32,6 +25,7 @@ def main():
             s = '\t'.join((x[0], country, x[13]))
             sys.stdout.write(s)
             sys.stdout.flush()
+
 
 if __name__ == "__main__":
     main()
