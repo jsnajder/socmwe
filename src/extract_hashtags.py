@@ -11,7 +11,7 @@ def main():
         for l in f:
             x = l.split('\t')
             for h in hashtag_re.findall(x[2]):
-                s = '\t'.join((x[0], h))
+                s = '\t'.join((x[1], h))
                 print s
 
 
