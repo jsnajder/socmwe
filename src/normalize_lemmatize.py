@@ -44,7 +44,7 @@ def normalize(d, w, case_insensitive=True, lowercase_output=False):
 data = '../data/'
 norm1 = data + 'norm-dict-utdallas.txt'
 norm2 = data + 'norm-dict-unimelb.txt'
-lemma = data + 'lemma_groups_MW_fixed.txt'
+lemma = data + 'lemma-dict.txt'
 
 
 def main():
