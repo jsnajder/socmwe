@@ -41,7 +41,7 @@ def normalize(d, w, case_insensitive=True, lowercase_output=False):
     return norm
 
 
-data = '/home/jan/socmwe/socmwe/data/'
+data = '../data/'
 norm1 = data + 'norm-dict-utdallas.txt'
 norm2 = data + 'norm-dict-unimelb.txt'
 lemma = data + 'lemma_groups_MW_fixed.txt'
@@ -59,7 +59,7 @@ def main():
                 continue
             word = x[0]
             pos = x[1]
-            if word[0] == '#' and pos not in '#@~UE$,G':
+            if word[0] == '#' and pos not in '#@~UE$,G' and len(word) > 1:
                 word = word[1:]
             norm = normalize(lemma_dict, normalize(norm_dict, word),
                              lowercase_output=True)
