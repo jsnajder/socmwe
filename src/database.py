@@ -18,25 +18,28 @@ def print_tables():
 #def create_tables():
 #    conn.execute('CREATE TABLE mwe(mwe_id INT PRIMARY KEY, method INT, mwe STRING)')
 
-def import_mwes():
+def import_fs():
     df = pd.read_csv(database_path + 'fsid-fs.txt', 
                      delimiter='\t', encoding='utf-8', index_col=0,
                      quoting=csv.QUOTE_NONE, header=None, 
                      names=['fs_id', 'fs'])
-    conn.execute('CREATE TABLE mwe(mwe_id INT PRIMARY KEY, method INT, gappy BOOL, weak BOOL, mwe STRING)')
-    query = ''' INSERT OR REPLACE INTO mwe (mwe_id,method,gappy,weak,mwe) values (?,0,0,0,?) '''
+    conn.execute('CREATE TABLE fs(fs_id INT PRIMARY KEY, fs STRING)')
+    query = ''' INSERT OR REPLACE INTO fs (fs_id,fs) values (?,?) '''
     conn.executemany(query, df.to_records())
     conn.commit()
     df = pd.read_csv(database_path + 'fsid-tweetid.txt', 
                      delimiter='\t', encoding='utf-8', index_col=0,
                      quoting=csv.QUOTE_NONE, header=None, 
                      names=['fs_id', 'tweet_id'])
-    conn.execute('CREATE TABLE mwe_tweet(mwe_id INT, tweet_id INT)')
-    query = ''' INSERT OR REPLACE INTO mwe_tweet(mwe_id, tweet_id) values (?, ?) '''
+    conn.execute('CREATE TABLE fs_tweet(fs_id INT, tweet_id INT)')
+    query = ''' INSERT OR REPLACE INTO fs_tweet(fs_id, tweet_id) values (?, ?) '''
     conn.executemany(query, df.to_records())
     conn.commit()
    
-   
+def tweets_with_fs(fs):
+    c = conn.execute('SELECT tweet.text FROM fs_tweet INNER JOIN tweet ON tweet.tweet_id = fs_tweet.tweet_id INNER JOIN fs ON fs.fs_id = fs_tweet.fs_id WHERE fs.fs_id = (SELECT fs.fs_id FROM fs WHERE fs.fs = \'%s\')' % fs) 
+    for row in c:
+      print row
 
 # This uses tweet_id as the primary key
 def migrate_sql():

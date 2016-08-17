@@ -143,7 +143,7 @@ def main():
 	if j % 1000000 == 0:
             print('%d tweets processed' % j)
             #sys.stdout.write(('%s\t%s\t%s\n' % (tweetid, typ, mwe_string)).encode('utf-8'))
-    fo1 = codecs.open('mweid-typ-mwe.txt', 'w', encoding='utf-8')
+    fo1 = codecs.open('mweid-type-freq-mwe.txt', 'w', encoding='utf-8')
     fo2 = codecs.open('mweid-tweetid.txt', 'w', encoding='utf-8')
     for i, ((mwe, typ), tweetids) in enumerate(d.iteritems()):
         freq = len(tweetids)
