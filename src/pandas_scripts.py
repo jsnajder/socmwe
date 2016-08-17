@@ -5,7 +5,7 @@ import pandas as pd
 import sqlite3
 from odo import odo
 
-data_path = '../data/'
+database_path = '../data/database'
 
 cnx = sqlite3.connect('../data/tweets-db.sqlite')
 
@@ -62,7 +62,7 @@ def hashtags():
 		dfs.append(s)
 	return pd.concat(dfs, axis=1).fillna(0).astype('int32').set_index('hashtag')
 
-hashtags_df = pd.read_csv(data_path + 'hashtags.csv', index_col=0)
+hashtags_df = pd.read_csv(database_path + 'hashtags.csv', index_col=0)
 
 #probs:
 hashtag_probs_df =  hashtags_df.loc[:,'us':'au'].div(hashtags_df.sum(axis=0), axis=1)
