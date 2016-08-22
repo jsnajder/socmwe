@@ -1,4 +1,6 @@
 
+# Extracts tweet_id, user_id, user_name from JSON tweets with tweet_lang == 'en'
+
 import json
 import subprocess
 
@@ -33,3 +35,4 @@ def tweet_lang(lang):
 
 def has_field(d, f):
     return d.get(f, None) is not None
+

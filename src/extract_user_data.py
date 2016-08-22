@@ -1,12 +1,20 @@
 
+import codecs
 import sys
-from TweetReader import read_tweets
+import json
 
 def main():
-    f = sys.argv[1]
-    tweets = read_tweets(f, decompress='lzop', filter_by=lambda t: t['lang']=='en')
-    for t in tweets:
-        print(('%s\t%s\t%s' % (t['id'], t['user']['id_str'], t['user']['name'])).encode('utf-8'))
+   UTF8Reader = codecs.getreader('utf8')
+   sys.stdin = UTF8Reader(sys.stdin)
+   for line in sys.stdin:
+       try:
+           t = json.loads(line)
+           if t['lang'] != 'en':
+               continue;  
+           print(('%s\t%s\t%s' % (t['id'], t['user']['id_str'], t['user']['name'])).encode('utf-8'))
+       except:
+           continue
+
 
 if __name__ == "__main__":
     main()

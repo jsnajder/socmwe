@@ -24,8 +24,9 @@ def read_conll_mwetagged_tweet(corpus_path, start=0, stop=-1, corpus_encoding='u
             try:
                ws = line.strip().split("\t")
      	       lemma = ws[2]
+     	       pos = ws[3]
                mwe_tag = ws[4]
-               sentence.append([lemma, mwe_tag])
+               sentence.append([lemma, mwe_tag, pos])
             except:
               continue
     if sentence_count < stop: 
@@ -62,7 +63,7 @@ def extract_mwes(tokens):
 def extract_strong_gappy(tokens, i):
     n = len(tokens)
     j = i
-    mwe = [tokens[j][0]]
+    mwe = [(tokens[j][0], tokens[j][2])]
     j += 1
     last_is_strong = False
     while j < n and (tokens[j][1][0] == i_strong or tokens[j][1][0].islower()):
@@ -72,29 +73,32 @@ def extract_strong_gappy(tokens, i):
            last_is_strong = False 
         if tokens[j][1][0].islower():
             word = '*'
+            pos = '*'
             while j < n and tokens[j][1][0].islower():
                j += 1
         else:
             word = tokens[j][0]
+            pos = tokens[j][2]
             j += 1
-        mwe.append(word)
+        mwe.append((word, pos))
     return mwe if last_is_strong else []
 
 def extract_strong_gapfilling(tokens, i):
     n = len(tokens)
     j = i
-    mwe = [tokens[j][0]]
+    mwe = [(tokens[j][0], tokens[j][2])]
     j += 1
     while j < n and (tokens[j][1][0] == i_strong_gap):
         word = tokens[j][0]
-        mwe.append(word)
+        pos = tokens[j][2]
+        mwe.append((word, pos))
         j += 1
     return mwe
 
 def extract_weak_gappy(tokens, i):
     n = len(tokens)
     j = i
-    mwe = [tokens[j][0]]
+    mwe = [(tokens[j][0], tokens[j][2])]
     j += 1
     seen_weak = False
     while j < n and (tokens[j][1][0] == i_strong or tokens[j][1][0] == i_weak or tokens[j][1][0].islower()):
@@ -102,12 +106,14 @@ def extract_weak_gappy(tokens, i):
             seen_weak = True
         if tokens[j][1][0].islower():
             word = '*'
+            pos = '*'
             while j < n and tokens[j][1][0].islower():
                j += 1
         else:
             word = tokens[j][0]
+            pos = tokens[j][2]
             j += 1
-        mwe.append(word)
+        mwe.append((word, pos))
     if not seen_weak:
 	return []
     else:
@@ -116,40 +122,58 @@ def extract_weak_gappy(tokens, i):
 def extract_weak_gapfilling(tokens, i):
     n = len(tokens)
     j = i
-    mwe = [tokens[j][0]]
+    mwe = [(tokens[j][0], tokens[j][2])]
     j += 1
     while j < n and (tokens[j][1][0] == i_weak_gap):
         word = tokens[j][0]
-        mwe.append(word)
+        pos = tokens[j][2]
+        mwe.append((word, pos))
         j += 1
     return mwe
 
+def most_common(l):
+    return max(set(l), key=l.count)
+
 def main():
+
     if len(sys.argv) != 2:
         print('Usage: mweconll2index.py <mwe.conll-tweetid file>')
         sys.exit(0)
+
     fi = read_conll_mwetagged_tweet(sys.argv[1])
-    d = {}
+    d_mwe = {}
+
     for j, (tweetid, tokens) in enumerate(fi):
         try:
-          for mwe, typ in extract_mwes(tokens):
+          for mwe_pos, typ in extract_mwes(tokens):
+              mwe, pos = zip(*mwe_pos)
               mwe_string = ' '.join(mwe)
-              if (mwe_string, typ) not in d:
-                 d[(mwe_string, typ)] = []
-              d[(mwe_string, typ)].append(tweetid)
+              pos_string = ' '.join(pos)
+              if (mwe_string, typ) not in d_mwe:
+                 d_mwe[mwe_string] = {'tweetid' : [], 'pos' : [], 'type' : []}
+              d_mwe[mwe_string]['tweetid'].append(tweetid)
+              d_mwe[mwe_string]['pos'].append(pos_string)
+              d_mwe[mwe_string]['type'].append(typ)
+              #sys.stdout.write(('%s\t%s\t%s\t%s\n' % (tweetid, typ, mwe_string, pos_string)).encode('utf-8'))
         except:
           print('error:')
           print j, tweetid, tokens
 	if j % 1000000 == 0:
-            print('%d tweets processed' % j)
-            #sys.stdout.write(('%s\t%s\t%s\n' % (tweetid, typ, mwe_string)).encode('utf-8'))
-    fo1 = codecs.open('mweid-type-freq-mwe.txt', 'w', encoding='utf-8')
-    fo2 = codecs.open('mweid-tweetid.txt', 'w', encoding='utf-8')
-    for i, ((mwe, typ), tweetids) in enumerate(d.iteritems()):
-        freq = len(tweetids)
-        fo1.write(u'%d\t%s\t%d\t%s\n' % (i, typ, freq, mwe))
-        for tweetid in tweetids:
+          print('%d tweets processed' % j)
+
+#    print d_mwe
+
+    fo1 = codecs.open('mwe.txt', 'w', encoding='utf-8')
+    fo2 = codecs.open('mwe-tweet.txt', 'w', encoding='utf-8')
+
+    for i, (mwe, x) in enumerate(d_mwe.iteritems()):
+        freq = len(x['tweetid'])
+        pos = most_common(x['pos'])
+        typ = most_common(x['type'])
+        fo1.write(u'%d\t%s\t%s\t%s\t%d\n' % (i, mwe, pos, typ, freq))
+        for tweetid in x['tweetid']:
             fo2.write(u'%d\t%s\n' % (i, tweetid))
+
     fo1.close()
     fo2.close()
 
