@@ -149,7 +149,7 @@ def main():
               mwe, pos = zip(*mwe_pos)
               mwe_string = ' '.join(mwe)
               pos_string = ' '.join(pos)
-              if (mwe_string, typ) not in d_mwe:
+              if mwe_string not in d_mwe:
                  d_mwe[mwe_string] = {'tweetid' : [], 'pos' : [], 'type' : []}
               d_mwe[mwe_string]['tweetid'].append(tweetid)
               d_mwe[mwe_string]['pos'].append(pos_string)
