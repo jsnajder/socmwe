@@ -1,7 +1,7 @@
 import sys
 import codecs
 
-# Filters lines from f2 for which tweetid exists in f1. Tweetid in both files is the first field.
+# Filters lines from f2 for which the key exists in f1. In both files, the key is the first field.
 
 def main():
     f1_name = sys.argv[1]
